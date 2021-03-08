@@ -1,4 +1,4 @@
-import argparse
+import argparse # dunder thing
 
 import urllib.request # fetchData()
 
@@ -6,11 +6,13 @@ import PyPDF2 # readData()
 
 import sqlite3 # createDB()
 
-def main():
+import re # readData()
+
+def main(url):
     
-    print("This is main")
+    print("Initiating Project 0...")
     
-    url = "https://www.normanok.gov/sites/default/files/documents/2021-02/2021-02-21_daily_incident_summary.pdf"
+    #url = "https://www.normanok.gov/sites/default/files/documents/2021-02/2021-02-21_daily_incident_summary.pdf"
     
     # Download data
     data = fetchData(url)
@@ -24,8 +26,8 @@ def main():
     # Insert data
     populateDB(incidents)
 
-    # Testing
-    f5()
+    # Run the requested query
+    countNature()
 
 def fetchData(url):
     print("Fetching data...")
@@ -45,26 +47,45 @@ def readData(data):
 
     fp = open("/tmp/data.pdf", "rb")
 
-    # Set the curser of the file back to the begining
+    # Set the cursor of the file back to the begining
     fp.seek(0)
 
     # Read the PDF
     pdfReader = PyPDF2.pdf.PdfFileReader(fp)
     page_count = pdfReader.getNumPages()
-    print(f"page count: ", page_count)
+    print(f"Page count: ", page_count)
 
     # Get the first page
     #page1 = pdfReader.getPage(0).extractText()
     #print(f"page 0 text: ", page1)
+    
+    # Initialize an empty list for our data
+    cleanData = []
 
     # Loop through each page of the pdf and extract the rows
     for i in range(page_count):
         page_i = pdfReader.getPage(i).extractText()
         #print("Page ", i+1, ":\n", page_i)
-        print("Page ", i+1)
 
-        # Clean up the data
+        # Clean up the data using regex
+        # First, count number of newlines on the current page
+        #nlines = page_i.count('\n')
+        
+        # Initialize
+        lines = []
 
+        for l in page_i:
+            match = re.search(r'([0-9/: ]*)\n(.*)\n(.*)\n(.*)\n(.*)\n', page_i)
+            line = match.groups()
+            lines.append(line)
+        #print(line)
+
+        # Add our line of data into our list
+        cleanData.append(lines)
+
+    print(cleanData)
+
+    return cleanData
 
 def createDB():
     print("Creating a database...")
@@ -118,16 +139,13 @@ def populateDB(incidents):
     con.commit()
     con.close()
 
-def f5():
-    print("f5")
-
-    # Group incidents by nature
-
-    # Count number of times each nature occurred
-
-    # Alphabetize by nature
-
-    # Separate fields with pipe (|)
+def countNature():
+    print("Counting incidents by nature...")
+    # Ultimately, we want to:
+        # Group incidents by nature
+        # Count number of times each nature occurred
+        # Alphabetize by nature
+        # Separate fields with pipe (|)
 
     # Let's write some SQL
     con = sqlite3.connect('normanpd.db')
@@ -139,15 +157,32 @@ def f5():
                     GROUP BY (nature)
                     ORDER BY nature
                 ''')
-
-    print(cur.fetchall())
+    
+    # Extract our list of natures and print in nice format
+    natureList = cur.fetchall()
+    
+    # Loop through each item in the list
+    for i in range(len(natureList)):
+        # Grab the ith tuple from the list
+        tuple_i = natureList[i]
+        # Grab the nature from the tuple
+        nature = tuple_i[0]
+        # Grab the count from the tuple
+        count = tuple_i[1]
+        # Print the nature and count, separated by a pipe
+        print(nature, "|", count)
 
     con.commit()
     con.close()
 
 if __name__ == '__main__':
-    main()
-
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--incidents", type=str, required=True, 
+                         help="Incident summary url.")
+             
+    args = parser.parse_args()
+    if args.incidents:
+        main(args.incidents)
 
 
 

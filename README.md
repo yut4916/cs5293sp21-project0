@@ -48,6 +48,14 @@ March 6, 2021
 	+ ran without error! need to open up the database and check to make sure it's in the table
 		- it was not in the table...because I forgot to save and close the sqlite connection. silly!
 		- fixed it, now we have 3 rows of (fake) data in our database!
+9. Now that we have some data in our database, let's tackle the last function -- f5() or countNature()
+	+ need to write some SQL to query our data, so let's write in the basic structure for sqlite3 (connection, cursor, execute, commit, close)
+	+ wrote a simple query and printed the selection, and it looks pretty good!
+	+ still need to clean up the format (right now it's a tuple -- [(Nature, count)], which isn't what we want)
+	+ we have a list of tuples, so to get them in the right format, we'll need a loop to access each entry in the list, grab the nature from the tuple (tuple[0]), add the pipe separator (|), and grab the count from the tuple (tuple[1])
+		- done! easy peasy. seems to be working with our test data
+10. Let's try to tackle parsing the data using regex, so we can replace the fake data with real data (i.e. the entire point of the project)
+	+ first, I'll rewatch the lectures and extra videos for a refresher
 
 ## General Notes
 * sudo apt install pipenv -- used this command to give me permission to install pipenv
