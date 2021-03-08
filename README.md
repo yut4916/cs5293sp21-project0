@@ -4,8 +4,39 @@ March 6, 2021
 
 ## How to Install and Use This Package
  
+## Assumptions
+* The only field that will overflow is the address field
+	+ The address field will only ever overflow onto a second line
+	+ Relatedly, if a row of the PDF contains 6 newline characters, the contents of lines3 and 4 are the address, which needs to be combined
+* The date/time field will only contain characters belonging to the class [0-9/: ]
+* The incident number field will always be in the format of 4 numerical digits, one dash, followed by 8 numerical digits
+* Incident report PDFs may have additional text (field names at the top, publish date/time at the bottom), but this text will not match my regex 
+		- (r'([0-9/: ]*)\n([0-9]{4}-[0-9]{8})\n(.*)(\n(.*))?\n(.*)\n(\w*)\n')
+* Incident report PDFs will maintain the same data structure, with 5 fields (Date/Time, Incident Number, Location, Nature, and Incident ORI)
+* Incident ORI field will only contain word characters (\w)
+* The url passed into the function will be an incident report PDF from Norman PD
 
-### Approach/Steps
+## Function Descriptions
+### fetchData
+
+### readData
+
+### createDB
+
+### populateDB
+
+### countNature
+
+
+## General Notes
+* sudo apt install pipenv -- used this command to give me permission to install pipenv
+	+ note: sudo su changes me to the super user, all powerful omniscient being. be careful (type "exit" in command line to become mortal)
+	+ note: this is just for installing system files
+* pipenv install packageName -- install a python package into virtual python environment
+* tmux kill-session -t 0 -- kill a tmux session (0 is the window ID)
+
+
+### Approach/Steps/Inner Monologue/Project Diary
 1. Setup file structure
 	+ create README
 	+ paste bare bones code provided in project outline
@@ -55,25 +86,32 @@ March 6, 2021
 	+ we have a list of tuples, so to get them in the right format, we'll need a loop to access each entry in the list, grab the nature from the tuple (tuple[0]), add the pipe separator (|), and grab the count from the tuple (tuple[1])
 		- done! easy peasy. seems to be working with our test data
 10. Let's try to tackle parsing the data using regex, so we can replace the fake data with real data (i.e. the entire point of the project)
-	+ first, I'll rewatch the lectures and extra videos for a refresher
-
-## General Notes
-* sudo apt install pipenv -- used this command to give me permission to install pipenv
-	+ note: sudo su changes me to the super user, all powerful omniscient being. be careful (type "exit" in command line to become mortal)
-	+ note: this is just for installing system files
-* pipenv install packageName -- install a python package into virtual python environment
-* tmux kill-session -t 0 -- kill a tmux session (0 is the window ID)
-
-## Assumptions
-
-
-## Function Descriptions
-### fetchData
-
-### readData
-
+	+ first, I'll rewatch the lectures and extra videos for a refresher 
+	+ sweet! videos were helpful, and after a bit of tinkering, I think I've got a decent regex to start
+		- r'(.*)\n(.*)\n(.*)\n(.*)\n(.*)\n'
+		- grabs whatever is between the newline characters
+	+ this only grabs the first row of every page, so we need to figure out how to read to the end of the page (maybe a for loop? maybe python has something for this?)
+	+ other outstanding issues: 
+		- when the address overflows onto 2 lines
+		- beginning of pdf (column headers)
+		- end of pdf (extra text - date file was published?)
+	+ first, let's figure out how to read the entire page. brainstorming solutions:
+		- count number of newlines in current page, divide by 5, for loop through? no, that assumes there's not very many 2-line addresses on a page
+		- while loop until end of string?
+		- wait! I think I found a solution. I was using re.search, but in Py RE 3 Dr. Grant mentions the re.findall function, which I think is exactly what we want
+			- ok, that worked (ish)! now it is reading the whole page, but we have to adjust our regex to fix the overflow problem
+	* adjusted my regex to be more specific: 
+		- r'([0-9/: ]*)\n([0-9]{4}-[0-9]{8})\n(.*)(\n(.*))?\n(.*)\n(\w*)\n'
+	* awesome, now we have a list of tuples that are almost ready to be inserted into the database. current problem: our tuples are length 7 now (instead of 5) because of the overflow problem. now let's write a loop/conditional statement to clean it up
+		- not too hard! beautiful!
+		- even better news: when we comment out the test data and pass in the real data, it seems to work! wahooooo
 
 # Citations
 Throughout the project my dad, Greg Yut, helped me understand the nuts and bolts, presumably all the stuff I should've known prior to taking this class but didn't learn because I'm not a C S student (i.e. Linux syntax/quirks, troubleshooting tips, etc). 
 
+While troubleshooting, I used the following resources:
+* [Python String Concatenation](https://www.geeksforgeeks.org/python-string-concatenation/)
+* [Regular expression operations](https://docs.python.org/3/library/re.html)
+* [Python - Tuples](https://www.tutorialspoint.com/python/python_tuples.htm)
+* Course videos, posted on Canvas
 

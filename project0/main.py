@@ -59,7 +59,7 @@ def readData(data):
     #page1 = pdfReader.getPage(0).extractText()
     #print(f"page 0 text: ", page1)
     
-    # Initialize an empty list for our data
+    # Initialize list for clean data
     cleanData = []
 
     # Loop through each page of the pdf and extract the rows
@@ -68,22 +68,24 @@ def readData(data):
         #print("Page ", i+1, ":\n", page_i)
 
         # Clean up the data using regex
-        # First, count number of newlines on the current page
-        #nlines = page_i.count('\n')
+        dirtyMatch = re.findall(r'([0-9/: ]*)\n([0-9]{4}-[0-9]{8})\n(.*)(\n(.*))?\n(.*)\n(\w*)\n', page_i)
         
-        # Initialize
-        lines = []
+        for k in range(len(dirtyMatch)):
+            tuple_k = dirtyMatch[k]
+            
+            if tuple_k[4]:                                                  # if the address overflows
+                addr = tuple_k[2] + tuple_k[4]                              # paste the 2 pieces together
+                cleanTuple = tuple_k[0:2] + (addr,) + tuple_k[5:7]          # put the tuple back together
 
-        for l in page_i:
-            match = re.search(r'([0-9/: ]*)\n(.*)\n(.*)\n(.*)\n(.*)\n', page_i)
-            line = match.groups()
-            lines.append(line)
-        #print(line)
+                # Add cleaned tuple to list of data
+                cleanData.append(cleanTuple)
+            else:                                                           # otherwise,
+                cleanTuple = tuple_k[0:3] + tuple_k[5:7]                    # just make a tuple without the empty slots
 
-        # Add our line of data into our list
-        cleanData.append(lines)
-
-    print(cleanData)
+                # Add cleaned tuple to list of data
+                cleanData.append(cleanTuple)
+    
+    #print(cleanData)
 
     return cleanData
 
@@ -127,10 +129,10 @@ def populateDB(incidents):
     cur = con.cursor()
 
     # TESTING w/ some fake data
-    incidents = [('2/21/2021 0:12', '2021-00010177', '2543 W MAIN ST', 'Disturbance/Domestic', 'OK0140200'),
-                 ('2/21/2021 0:20', '2021-00010178', '2543 W MAIN ST', 'Traffic Stop', 'OK0140200'),
-                 ('2/21/2021 0:12', '2021-00010179', '2543 W MAIN ST', 'Drunk Driver', 'OK0140200'),
-                 ('2/21/2021 0:12', '2021-00010179', '2543 W MAIN ST', 'Drunk Driver', 'OK0140200'),]
+    #incidents = [('2/21/2021 0:12', '2021-00010177', '2543 W MAIN ST', 'Disturbance/Domestic', 'OK0140200'),
+    #             ('2/21/2021 0:20', '2021-00010178', '2543 W MAIN ST', 'Traffic Stop', 'OK0140200'),
+    #             ('2/21/2021 0:12', '2021-00010179', '2543 W MAIN ST', 'Drunk Driver', 'OK0140200'),
+    #             ('2/21/2021 0:12', '2021-00010179', '2543 W MAIN ST', 'Drunk Driver', 'OK0140200'),]
 
     # Insert many rows of data, each with 5 values
     cur.executemany("INSERT INTO incidents VALUES (?,?,?,?,?)", incidents)
