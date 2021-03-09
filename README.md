@@ -3,7 +3,7 @@ Written by Katy Yut
 March 6, 2021
 
 ## How to Install and Use This Package
-Hello, and welcome to Katy Yut's Project 0 ~experience~. Is it scrappy? Yes. Does it work? Yes. Is she on her way to being a master hacker? Signs point to yes. This package takes a single argument, url, the web address to one of the Norman Police Department's incident reports, and prints out an alphabetical list of the unique natures of the incidents, as well as the number of times each occurred (i.e. I completed the assigned, as requested). To use it, simply download the contents and run the following in the command line: pipenv run python project0/main.py --incidents \<url\>, replacing \<url\> with the link to your choice of incident report. No further action is required on your part, as I have taken the liberty of writing a series of functions to accomplish the daunting task set before me. Enjoy! 
+Hello, and welcome to Katy Yut's Project 0 \~experience\~. Is it scrappy? Yes. Does it work? Yes. Is she on her way to being a master hacker? Signs point to yes. This package takes a single argument, url, the web address to one of the Norman Police Department's incident reports, and prints out an alphabetical list of the unique natures of the incidents, as well as the number of times each occurred (i.e. I completed the assigned, as requested). To use it, simply download the contents and run the following in the command line: pipenv run python project0/main.py --incidents \<url\>, replacing \<url\> with the link to your choice of incident report. No further action is required on your part, as I have taken the liberty of writing a series of functions to accomplish the daunting task set before me. Enjoy! 
  
 ## Assumptions
 * The only field that will overflow is the address field
@@ -115,6 +115,30 @@ Opens the normanpd.db database and executes a query to print an alphabetical lis
 * pipenv install packageName -- install a python package into virtual python environment
 * tmux kill-session -t 0 -- kill a tmux session (0 is the window ID)
 
+## Testing
+### Test test
+This is just a simple test to make sure I know how to write tests.
+
+### Test f1
+Check to see if my first function, fetchData, created the temp file ("/tmp/data.pdf"). 
+* Packages: os.path
+
+### Test f2
+Check if the output is clean data.
+* Packages: re, sqlite3
+
+### Test f3
+First, check to see if our database file ("normanpd.db") exists. Then, if it does exist, open it and see if our table ("incidents") is inside.
+* Packages: os.path, sqlite3
+
+### Test f4
+Check to see if there's actually any data in our table.
+* Packages: sqlite3
+
+### Test f5
+Check to see if the sum of the nature counts equals the number of rows in the PDF
+* Packages: sqlite3 
+
 
 # Citations
 Throughout the project my dad, Greg Yut, helped me understand the nuts and bolts, presumably all the stuff I should've known prior to taking this class but didn't learn because I'm not a C S student (i.e. Linux syntax/quirks, troubleshooting tips, etc). 
@@ -127,3 +151,6 @@ While troubleshooting, I used the following resources:
 * [SQLite Drop Table](https://www.sqlitetutorial.net/sqlite-drop-table/)
 * [sqlite3 Python Documentation](https://docs.python.org/3.8/library/sqlite3.html)
 * [Python Check If File or Directory Exists](https://www.guru99.com/python-check-if-file-exists.html)
+* [How do I check in SQLite whether a table exists?](https://stackoverflow.com/questions/1601151/how-do-i-check-in-sqlite-whether-a-table-exists)
+
+
