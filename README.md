@@ -3,40 +3,42 @@ Written by Katy Yut
 March 6, 2021
 
 ## How to Install and Use This Package
+Hello, and welcome to Katy Yut's Project 0 ~experience~. Is it scrappy? Yes. Does it work? Yes. Is she on her way to being a master hacker? Signs point to yes. This package takes a single argument, url, the web address to one of the Norman Police Department's incident reports, and prints out an alphabetical list of the unique natures of the incidents, as well as the number of times each occurred (i.e. I completed the assigned, as requested). To use it, simply download the contents and run the following in the command line: pipenv run python project0/main.py --incidents \<url\>, replacing \<url\> with the link to your choice of incident report. No further action is required on your part, as I have taken the liberty of writing a series of functions to accomplish the daunting task set before me. Enjoy! 
  
 ## Assumptions
 * The only field that will overflow is the address field
 	+ The address field will only ever overflow onto a second line
-	+ Relatedly, if a row of the PDF contains 6 newline characters, the contents of lines3 and 4 are the address, which needs to be combined
+	+ Relatedly, if a row of the PDF contains 6 newline characters, the contents of lines 3 and 4 are the address
 * The date/time field will only contain characters belonging to the class [0-9/: ]
 * The incident number field will always be in the format of 4 numerical digits, one dash, followed by 8 numerical digits
 * Incident report PDFs may have additional text (field names at the top, publish date/time at the bottom), but this text will not match my regex 
-		- (r'([0-9/: ]*)\n([0-9]{4}-[0-9]{8})\n(.*)(\n(.*))?\n(.*)\n(\w*)\n')
-* Incident report PDFs will maintain the same data structure, with 5 fields (Date/Time, Incident Number, Location, Nature, and Incident ORI)
+	+ r'([0-9/: ]\*)\n([0-9]{4}-[0-9]{8})\n(.\*)(\n(.\*))?\n(.\*)\n(\w\*)\n'
+* Incident report PDFs will maintain the same data structure, with 5 fields (Date/Time, Incident Number, Location, Nature, and Incident ORI), in that order
 * Incident ORI field will only contain word characters (\w)
 * The url passed into the function will be an incident report PDF from Norman PD
 
 ## Function Descriptions
 ### fetchData
+Takes one argument, url (string), and grabs the data from the provided Norman PD Incident Report PDF. This data is saved in a temporary file in the local /tmp folder. Note: does not return anything.
+* Packages: urllib.request
 
 ### readData
+Opens the temp file "data.pdf" (written by the fetchData function), and uses the PyPDF2 package to read it into a string one page at a time. Note: takes no arguments. This string is then parsed using regular expressions. Returns a list of tuples. Each entry in the list is a row of data from the PDF. Each tuple within the list contains five elements, one for each column. 
+* Packages: PyPDF2, re
 
 ### createDB
+Creates an sqlite database (called "normanpad.db") with five fields: incident\_time, incident\_number, incident\_location, nature, and incident\_ori (all type text). Note: if the database already exists, it is deleted and recreated. 
+* Packages: sqlite3
 
 ### populateDB
+Takes one argument, incidents (list of tuples), opens the existing sqlite database (normanpd.db), and inserts the data into the database.
+* Packages: sqlite3
 
 ### countNature
+Opens the normanpd.db database and executes a query to print an alphabetical list of all unique natures and their count. 
+* Packages: sqlite3
 
-
-## General Notes
-* sudo apt install pipenv -- used this command to give me permission to install pipenv
-	+ note: sudo su changes me to the super user, all powerful omniscient being. be careful (type "exit" in command line to become mortal)
-	+ note: this is just for installing system files
-* pipenv install packageName -- install a python package into virtual python environment
-* tmux kill-session -t 0 -- kill a tmux session (0 is the window ID)
-
-
-### Approach/Steps/Inner Monologue/Project Diary
+## Approach/Steps/Inner Monologue/Project Diary
 1. Setup file structure
 	+ create README
 	+ paste bare bones code provided in project outline
@@ -88,7 +90,7 @@ March 6, 2021
 10. Let's try to tackle parsing the data using regex, so we can replace the fake data with real data (i.e. the entire point of the project)
 	+ first, I'll rewatch the lectures and extra videos for a refresher 
 	+ sweet! videos were helpful, and after a bit of tinkering, I think I've got a decent regex to start
-		- r'(.*)\n(.*)\n(.*)\n(.*)\n(.*)\n'
+		- r'(.\*)\n(.\*)\n(.\*)\n(.\*)\n(.\*)\n'
 		- grabs whatever is between the newline characters
 	+ this only grabs the first row of every page, so we need to figure out how to read to the end of the page (maybe a for loop? maybe python has something for this?)
 	+ other outstanding issues: 
@@ -101,10 +103,18 @@ March 6, 2021
 		- wait! I think I found a solution. I was using re.search, but in Py RE 3 Dr. Grant mentions the re.findall function, which I think is exactly what we want
 			- ok, that worked (ish)! now it is reading the whole page, but we have to adjust our regex to fix the overflow problem
 	* adjusted my regex to be more specific: 
-		- r'([0-9/: ]*)\n([0-9]{4}-[0-9]{8})\n(.*)(\n(.*))?\n(.*)\n(\w*)\n'
+		- r'([0-9/: ]\*)\n([0-9]{4}-[0-9]{8})\n(.\*)(\n(.\*))?\n(.\*)\n(\w\*)\n'
 	* awesome, now we have a list of tuples that are almost ready to be inserted into the database. current problem: our tuples are length 7 now (instead of 5) because of the overflow problem. now let's write a loop/conditional statement to clean it up
 		- not too hard! beautiful!
 		- even better news: when we comment out the test data and pass in the real data, it seems to work! wahooooo
+
+### General Notes
+* sudo apt install pipenv -- used this command to give me permission to install pipenv
+	+ note: sudo su changes me to the super user, all powerful omniscient being. be careful (type "exit" in command line to become mortal)
+	+ note: this is just for installing system files
+* pipenv install packageName -- install a python package into virtual python environment
+* tmux kill-session -t 0 -- kill a tmux session (0 is the window ID)
+
 
 # Citations
 Throughout the project my dad, Greg Yut, helped me understand the nuts and bolts, presumably all the stuff I should've known prior to taking this class but didn't learn because I'm not a C S student (i.e. Linux syntax/quirks, troubleshooting tips, etc). 
@@ -114,4 +124,6 @@ While troubleshooting, I used the following resources:
 * [Regular expression operations](https://docs.python.org/3/library/re.html)
 * [Python - Tuples](https://www.tutorialspoint.com/python/python_tuples.htm)
 * Course videos, posted on Canvas
-
+* [SQLite Drop Table](https://www.sqlitetutorial.net/sqlite-drop-table/)
+* [sqlite3 Python Documentation](https://docs.python.org/3.8/library/sqlite3.html)
+* [Python Check If File or Directory Exists](https://www.guru99.com/python-check-if-file-exists.html)

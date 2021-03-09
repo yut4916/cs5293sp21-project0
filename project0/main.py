@@ -15,10 +15,10 @@ def main(url):
     #url = "https://www.normanok.gov/sites/default/files/documents/2021-02/2021-02-21_daily_incident_summary.pdf"
     
     # Download data
-    data = fetchData(url)
+    fetchData(url)
 
     # Extract data
-    incidents = readData(data)
+    incidents = readData()
     
     # Create our SQLite database
     db = createDB()
@@ -42,7 +42,7 @@ def fetchData(url):
 
     print("Data has been fetched!")
 
-def readData(data):
+def readData():
     print("Reading the PDF...")
 
     fp = open("/tmp/data.pdf", "rb")
