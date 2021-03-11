@@ -3,7 +3,9 @@ Written by Katy Yut
 March 6, 2021
 
 ## How to Install and Use This Package
-Hello, and welcome to Katy Yut's Project 0 \~experience\~. Is it scrappy? Yes. Does it work? Yes. Is she on her way to being a master hacker? Signs point to yes. This package takes a single argument, url, the web address to one of the Norman Police Department's incident reports, and prints out an alphabetical list of the unique natures of the incidents, as well as the number of times each occurred (i.e. I completed the assigned, as requested). To use it, simply download the contents and run the following in the command line: pipenv run python project0/main.py --incidents \<url\>, replacing \<url\> with the link to your choice of incident report. No further action is required on your part, as I have taken the liberty of writing a series of functions to accomplish the daunting task set before me. Enjoy! 
+Hello, and welcome to Katy Yut's Project 0 \~experience\~. Is it scrappy? Yes. Does it work? Yes. Is she on her way to being a master hacker? Signs point to yes. This package takes a single argument, url, the web address to one of the Norman Police Department's incident reports, and prints out an alphabetical list of the unique natures of the incidents, as well as the number of times each occurred (i.e. I completed the assigned, as requested). To use it, please run 'pipenv install' before running program in order to get PyPDF2 installed. Then simply download the contents and run the following in the command line: pipenv run python project0/main.py --incidents \<url\>, replacing \<url\> with the link to your choice of incident report. No further action is required on your part, as I have taken the liberty of writing a series of functions to accomplish the daunting task set before me. Enjoy!
+
+To run: pipenv run python project0/main.py --incidents https://www.normanok.gov/sites/default/files/documents/2021-02/2021-02-21\_daily\_incident\_summary.pdf 
  
 ## Assumptions
 * The only field that will overflow is the address field
@@ -107,6 +109,7 @@ Opens the normanpd.db database and executes a query to print an alphabetical lis
 	* awesome, now we have a list of tuples that are almost ready to be inserted into the database. current problem: our tuples are length 7 now (instead of 5) because of the overflow problem. now let's write a loop/conditional statement to clean it up
 		- not too hard! beautiful!
 		- even better news: when we comment out the test data and pass in the real data, it seems to work! wahooooo
+11. I can't figure out how to finish writing my tests. I got a few minimal assert statments, but nothing very meaningful. Main hurdle: I can't figure out how to import my project0/main.py module into the tests/tests.py file. I tried following all of the proposed solutions in [this](https://www.reddit.com/r/learnpython/comments/4ace8f/help_importing_module_from_parent_directory/) reddit thread, but they all threw the same general errors (ImportError: attempted relative import with no known parent package)
 
 ### General Notes
 * sudo apt install pipenv -- used this command to give me permission to install pipenv
@@ -116,6 +119,8 @@ Opens the normanpd.db database and executes a query to print an alphabetical lis
 * tmux kill-session -t 0 -- kill a tmux session (0 is the window ID)
 
 ## Testing
+To run: pipenv run pytest
+
 ### Test test
 This is just a simple test to make sure I know how to write tests.
 
@@ -137,7 +142,7 @@ Check to see if there's actually any data in our table.
 
 ### Test f5
 Check to see if the sum of the nature counts equals the number of rows in the PDF
-* Packages: sqlite3 
+* Packages: none
 
 
 # Citations
@@ -152,5 +157,5 @@ While troubleshooting, I used the following resources:
 * [sqlite3 Python Documentation](https://docs.python.org/3.8/library/sqlite3.html)
 * [Python Check If File or Directory Exists](https://www.guru99.com/python-check-if-file-exists.html)
 * [How do I check in SQLite whether a table exists?](https://stackoverflow.com/questions/1601151/how-do-i-check-in-sqlite-whether-a-table-exists)
-
+* [[Help] Importing module from parent directory](https://www.reddit.com/r/learnpython/comments/4ace8f/help_importing_module_from_parent_directory/)
 

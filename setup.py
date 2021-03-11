@@ -5,7 +5,7 @@ setup(
 	version='1.0',
 	author='Katherine (Katy) Yut',
 	author_email='katherine.yut@ou.edu',
-	packages=find_packages(exclude=('tests', 'docs')),
+	packages=find_packages(exclude=('docs')),
 	setup_requires=['pytest-runner'],
 	tests_require=['pytest']	
 )

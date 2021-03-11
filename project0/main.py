@@ -1,16 +1,14 @@
+# to run: pipenv run python project0/main.py --incidents https://www.normanok.gov/sites/default/files/documents/2021-02/2021-02-21_daily_incident_summary.pdf
+
 import argparse # dunder thing
-
-import urllib.request # fetchData()
-
 import PyPDF2 # readData()
-
-import sqlite3 # createDB()
-
 import re # readData()
+import sqlite3 # createDB()
+import urllib.request # fetchData()
 
 def main(url):
     
-    print("Initiating Project 0...")
+    #print("Initiating Project 0...")
     
     #url = "https://www.normanok.gov/sites/default/files/documents/2021-02/2021-02-21_daily_incident_summary.pdf"
     
@@ -30,7 +28,7 @@ def main(url):
     countNature()
 
 def fetchData(url):
-    print("Fetching data...")
+    #print("Fetching data...")
     
     headers = {}
     headers['User-Agent'] = "Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.27 Safari/537.17" 
@@ -40,10 +38,10 @@ def fetchData(url):
     tmp_file = open("/tmp/data.pdf", "wb")
     tmp_file.write(data)
 
-    print("Data has been fetched!")
+    #print("Data has been fetched!")
 
 def readData():
-    print("Reading the PDF...")
+    #print("Reading the PDF...")
 
     fp = open("/tmp/data.pdf", "rb")
 
@@ -53,7 +51,7 @@ def readData():
     # Read the PDF
     pdfReader = PyPDF2.pdf.PdfFileReader(fp)
     page_count = pdfReader.getNumPages()
-    print(f"Page count: ", page_count)
+    #print(f"Page count: ", page_count)
 
     # Get the first page
     #page1 = pdfReader.getPage(0).extractText()
@@ -90,7 +88,7 @@ def readData():
     return cleanData
 
 def createDB():
-    print("Creating a database...")
+    #print("Creating a database...")
     
     # Create connection object that represents the database
     con = sqlite3.connect('normanpd.db')
@@ -120,7 +118,7 @@ def createDB():
     con.close()
 
 def populateDB(incidents):
-    print("Populating database...")
+    #print("Populating database...")
 
     # Connect to our database
     con = sqlite3.connect('normanpd.db')
@@ -142,7 +140,7 @@ def populateDB(incidents):
     con.close()
 
 def countNature():
-    print("Counting incidents by nature...")
+    #print("Counting incidents by nature...")
     # Ultimately, we want to:
         # Group incidents by nature
         # Count number of times each nature occurred
@@ -172,7 +170,7 @@ def countNature():
         # Grab the count from the tuple
         count = tuple_i[1]
         # Print the nature and count, separated by a pipe
-        print(nature, "|", count)
+        print(f"{nature}|{count}")
 
     con.commit()
     con.close()
